@@ -42,13 +42,13 @@ get('/') do
   end
 end
 
-post(/^\/.search/) do
+post(/\/.search/) do
   @query = params[:query]
   @results = Blog.search(params[:query])
   haml :results
 end
 
-get(/^\/\.edit\/(.*)?$/) do
+get(/\/\.edit\/(.*)?/) do
   pass unless config['editable']
   path, format = split_format(params[:captures].first)
   protected! params[:captures].first, "write"
@@ -61,7 +61,7 @@ get(/^\/\.edit\/(.*)?$/) do
   end
 end
 
-get(/^\/(.*)?$/) do
+get(/\/(.*)?/) do
   path, format = split_format(params[:captures].first)
   @files = (Blog.files(path) or [])
   @blog = Blog.find(path)
@@ -78,7 +78,7 @@ get(/^\/(.*)?$/) do
       pass
     end
   elsif config['editable'] and extension(path, 'org').match(Blog.location_regexp)
-    pass if path.match(/^\./)
+    pass if path.match(/\./)
     protected! params[:captures].first, "read"
     @path = path
     haml :confirm_create
@@ -87,7 +87,7 @@ get(/^\/(.*)?$/) do
   end
 end
 
-post(/^\/(.*)?$/) do
+post(/\/(.*)?/) do
   path, format = split_format(params[:captures].first)
   @blog = Blog.find(path)
   if params[:comment]
@@ -108,7 +108,7 @@ post(/^\/(.*)?$/) do
                        :body => "# -*- mode: org -*-\n#+TITLE: #{File.basename(path)}\n#+OPTIONS: toc:nil ^:nil\n\n")
       @blog.save
       redirect(path_for(@blog))
-    elsif path.match(/^\./)
+    elsif path.match(/\./)
       pass
     else
       "Can't create a new page at #{path}"
@@ -139,7 +139,7 @@ helpers do
 
   def comment(blog, parent_comment) end
 
-  def extension(path, format = nil) (path.match(/^(.+)\..+$/) ? $1 : path)+(format ? "."+format : '') end
+  def extension(path, format = nil) (path.match(/(.+)\..+$/) ? $1 : path)+(format ? "."+format : '') end
 
   def time_ago(from_time)
     distance_in_minutes = (((Time.now - from_time.to_time).abs)/60).round

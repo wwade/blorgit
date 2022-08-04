@@ -4,7 +4,7 @@
 #
 ---
 # blogs_dir: Directory containing the org-mode files to be published
-:blogs_dir: ~/blogs
+:blogs_dir: /blogs
 # url_prefix: Prefix behind which this application will be located
 :url_prefix: /
 # set default configuration options
